@@ -2,7 +2,7 @@
 
 [YouTube](https://youtu.be/au27CwIFHzs)
 
-Running Application
+Install Dependencies / Running Application
 ```sh
 # Install dependencies
 npm install express cors
@@ -12,6 +12,14 @@ node backend/index.js
 
 # Run Vue JS as usual
 npm run dev
+
+# Tip: To disable Copilot suggestions (Ctrl+Shift+P and type 'di cop').
+# The following option will appear: Enable/Disable Copilot completions
+# 
+
+# Attach VS Code's 'Enable/Disable Copilot completions' to hot key?
+# command 'github.copilot.toggleCompletions' not found.
+# It's 'Enable/Disable Copilot completions' when searching using Ctrl+Shift+P
 ```
 
 ### Project
