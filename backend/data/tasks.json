@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "user": { "name": "Bob Smith" },
+    "status": "In Progress",
+    "title": "Implement user authentication system",
+    "due_at": "2025-03-19"
+  },
+  {
+    "id": 2,
+    "user": { "name": "Alice Johnson" },
+    "status": "Not Started", 
+    "title": "Design database schema for new project",
+    "due_at": "2025-04-15"
+  },
+  {
+    "id": 3,
+    "user": { "name": "Charlie Brown" },
+    "status": "Completed",
+    "title": "Optimize frontend performance",
+    "due_at": "2025-02-28"
+  }
+]
