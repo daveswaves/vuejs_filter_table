@@ -7,6 +7,7 @@ import FilterRadios from '@/components/FilterRadios.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 
 const searchFilter = ref('')
+const radioFilter = ref('')
 
 const props = defineProps({
   items: {
@@ -16,22 +17,50 @@ const props = defineProps({
 })
 
 const filteredItems = computed(() => {
-  // return props.items.filter(item => item.status == 'Not Started')
-  if (searchFilter.value.trim() != '') {
+  let items = props.items;
+  const today = new Date();
+
+  /* All this getFullYear(), getMonth(), getDate()
+   * can definitely be improved. */
+  switch (radioFilter.value) {
+    case 'today':
+      items = items.filter(item => {
+        const itemDate = new Date(item.due_at);
+        return itemDate.getFullYear() === today.getFullYear() &&
+               itemDate.getMonth() === today.getMonth() &&
+               itemDate.getDate() === today.getDate();
+      });
+      break;
+    case 'past':
+      items = items.filter(item => {
+        const itemDate = new Date(item.due_at);
+        return itemDate.getFullYear() < today.getFullYear() ||
+               (itemDate.getFullYear() === today.getFullYear() &&
+                (itemDate.getMonth() < today.getMonth() ||
+                 (itemDate.getMonth() === today.getMonth() &&
+                  itemDate.getDate() < today.getDate())));
+      });
+      break;
+  }
+
+  if (searchFilter.value && searchFilter.value.trim() !== '') {
     const searchLc = searchFilter.value.toLowerCase();
-    
-    return props.items.filter(item =>
+    items = items.filter(item => 
       item.status.toLowerCase().includes(searchLc) ||
       item.title.toLowerCase().includes(searchLc) ||
       item.user.name.toLowerCase().includes(searchLc)
     );
   }
 
-  return props.items;
+  return items;
 });
 
 const handelSearch = (search) => {
   searchFilter.value = search;
+};
+
+const handelRadioFilter = (filter) => {
+  radioFilter.value = filter;
 };
 </script>
 
@@ -41,7 +70,7 @@ const handelSearch = (search) => {
     <SearchForm @search="handelSearch" />
     <div class="flex items-center justify-end text-sm font-semibold">
       <!-- Radio buttons -->
-      <FilterRadios />
+      <FilterRadios @filter="handelRadioFilter" />
       <!-- List of filters for statuses -->
       <FilterDropdown />
     </div>
