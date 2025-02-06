@@ -15,7 +15,9 @@ npm run dev
 ```
 
 ### Project
-Computed properties, events, fetch requests, and emits to build out a component that acts like a filter and search table with Vue 3 and the Composition API.
+Employs computed properties, events, fetch requests and emits to create a filter and search table with Vue 3 and the Composition API.
+
+`Express.js` lets us create a lightweight web server (listening on port 3000) that handles HTTP requests and allows a /tasks route to be defined that returns JSON data. It enables the use of `CORS` middleware, which to allows allows the frontend to make requests to the backend.
 
 Project Directory Structure
 ```
