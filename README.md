@@ -40,7 +40,10 @@ filter_table/
 │   ├── assets
 │   │   └── main.css
 │   ├── components
-│   │   └── DataTable.vue
+│   │   ├── DataTable.vue
+│   │   ├── FilterDropdown.vue
+│   │   ├── FilterRadios.vue
+│   │   └── SearchForm.vue
 │   └── App.vue
 │
 ├── index.html
@@ -59,17 +62,24 @@ FILE: backend/data/task.js
   },
   {
     "id": 2,
-    "user": { "name": "Alice Johnson" },
-    "status": "Not Started", 
-    "title": "Design database schema for new project",
-    "due_at": "2025-04-15"
-  },
-  {
-    "id": 3,
     "user": { "name": "Charlie Brown" },
     "status": "Completed",
     "title": "Optimize frontend performance",
-    "due_at": "2025-02-28"
+    "due_at": "2025-01-28"
+  },
+  {
+    "id": 3,
+    "user": { "name": "Alice Johnson" },
+    "status": "Not Started", 
+    "title": "Design database schema for new project",
+    "due_at": "2025-02-06"
+  },
+  {
+    "id": 4,
+    "user": { "name": "Mike Myers" },
+    "status": "In Progress", 
+    "title": "Mock database data for new project",
+    "due_at": "2025-02-07"
   }
 ]
 ```
@@ -120,18 +130,90 @@ FILE: src/assets/main.css
 @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 ```
 
+
 FILE: src/components/DataTable.vue
 ```html
 <script setup>
-  defineProps({
-    items: {
-      type: Array,
-      required: true
-    }
-  })
+import { computed, ref } from 'vue';
+
+import SearchForm from '@/components/SearchForm.vue'
+import FilterRadios from '@/components/FilterRadios.vue'
+import FilterDropdown from '@/components/FilterDropdown.vue'
+
+const searchFilter = ref('');
+const radioFilter = ref('');
+const statusesFilter = ref([]);
+
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true
+  }
+})
+
+const filteredItems = computed(() => {
+  let items = props.items;
+  const today = new Date();
+  const fmtToday = today.toISOString().split('T')[0]; // converts to yyyy-mm-dd
+
+  switch (radioFilter.value) {
+    case 'today':
+      items = items.filter(item => {
+        const itemDate = new Date(item.due_at);
+        return item.due_at == fmtToday;
+      });
+      break;
+    case 'past':
+      items = items.filter(item => {
+        const itemDate = new Date(item.due_at);
+        return item.due_at < fmtToday;
+      });
+      break;
+  }
+
+  if (statusesFilter.value.length) {
+    items = items.filter(item => statusesFilter.value.includes(item.status));
+  }
+
+  if (searchFilter.value && searchFilter.value.trim() !== '') {
+    const searchLc = searchFilter.value.toLowerCase();
+    items = items.filter(item => 
+      item.status.toLowerCase().includes(searchLc) ||
+      item.title.toLowerCase().includes(searchLc) ||
+      item.user.name.toLowerCase().includes(searchLc)
+    );
+  }
+
+  return items;
+});
+
+const handelSearch = (search) => {
+  searchFilter.value = search;
+};
+
+const handelRadioFilter = (filter) => {
+  radioFilter.value = filter;
+};
+
+const handleCheckboxFilter = (filter) => {
+  if (statusesFilter.value.includes(filter)) {
+    return statusesFilter.value.splice(statusesFilter.value.indexOf(filter), 1);
+  }
+  return statusesFilter.value.push(filter);
+};
 </script>
 
 <template>
+  <div class="flex items-center justify-between">
+    <!-- Search bar -->
+    <SearchForm @search="handelSearch" />
+    <div class="flex items-center justify-end text-sm font-semibold">
+      <!-- Radio buttons -->
+      <FilterRadios @filter="handelRadioFilter" />
+      <!-- List of filters for statuses -->
+      <FilterDropdown :items="items" @filter="handleCheckboxFilter" />
+    </div>
+  </div>
   <table class="w-full text-sm text-left">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
@@ -146,7 +228,7 @@ FILE: src/components/DataTable.vue
       </tr>
     </thead>
     <tbody class="text-gray-500">
-      <tr v-for="item in items" :key="item.id" class="border-b">
+      <tr v-for="item in filteredItems" :key="item.id" class="border-b">
         <td class="px-4 py-3">{{ item.id }}</td>
         <td class="px-4 py-3">{{ item.user.name }}</td>
         <td class="px-4 py-3">{{ item.status }}</td>
@@ -158,8 +240,102 @@ FILE: src/components/DataTable.vue
       </tr>
     </tbody>
   </table>
+  <div class="bg-red relative border rounded-lg"></div>
 </template>
 ```
+
+
+FILE: src/components/FilterDropdown.vue
+```html
+<script setup>
+import { ref, computed } from 'vue';
+
+const show = ref(false);
+
+const props = defineProps({
+  items: {
+    type: Array,
+    required: true
+  }
+})
+
+const statuses = computed(() => {
+  return [...new Set(props.items.map(item => item.status))];
+});
+
+const emit = defineEmits(['filter']);
+
+const filter = (e) => {
+  emit('filter', e.target.value);
+}
+</script>
+
+<template>
+  <div class="relative flex items-center w-full px-4">
+    <button @click="show = !show" class="w-full flex items-center justify-center py-2 px-4 text-sm font-medium text-gray-900">
+      Filter
+    </button>
+    <div v-if="show" class="absolute top-12 right-0 z-10 w-48 p-3 bg-white rounded-lg shadow">
+      <h6 class="mb-3 text-sm font-medium text-gray-900">Status</h6>
+      <ul class="space-y-2 text-sm">
+        <li v-for="(status, index) in statuses">
+          <input :id="`filter_option_${index}`" @change="filter" type="checkbox" :value="status" class="w-4 h-4 bg-gray-300 rounded text-gray-900">
+          <label :for="`filter_option_${index}`" class="ml-2 text-sm font-medium text-gray-900">{{ status }}</label>
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
+```
+
+
+FILE: src/components/FilterRadios.vue
+```html
+<script setup>
+const emit = defineEmits(['filter']);
+
+const filter = (e) => {
+  emit('filter', e.target.value);
+};
+</script>
+
+<template>
+  <label class="flex mr-4 items-center flex-nowrap">
+    <input type="radio" name="show" value="all" checked @change="filter">
+    <span class="whitespace-nowrap ml-1">Show All</span>
+  </label>
+  <label class="flex mr-4 items-center flex-nowrap">
+    <input type="radio" name="show" value="today" @change="filter">
+    <span class="whitespace-nowrap ml-1">Due Today</span>
+  </label>
+  <label class="flex mr-4 items-center flex-nowrap">
+    <input type="radio" name="show" value="past" @change="filter">
+    <span class="whitespace-nowrap ml-1">Past Due</span>
+  </label>
+</template>
+```
+
+
+FILE: src/components/SearchForm.vue
+```html
+<script setup>
+const emit = defineEmits(['search']);
+
+const search = (e) => {
+  emit('search', e.target.value);
+};
+</script>
+
+<template>
+  <form class="py-3 px-4 flex items-center">
+    <label class="sr-only">Search</label>
+    <div class="relative w-full">
+      <input type="text" @input="search" placeholder="Search" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-md py-0.2 px-0.5">
+    </div>
+  </form>
+</template>
+```
+
 
 FILE: src/App.vue
 ```html
