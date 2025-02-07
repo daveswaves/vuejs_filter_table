@@ -6,8 +6,9 @@ import SearchForm from '@/components/SearchForm.vue'
 import FilterRadios from '@/components/FilterRadios.vue'
 import FilterDropdown from '@/components/FilterDropdown.vue'
 
-const searchFilter = ref('')
-const radioFilter = ref('')
+const searchFilter = ref('');
+const radioFilter = ref('');
+const statusesFilter = ref([]);
 
 const props = defineProps({
   items: {
@@ -36,6 +37,10 @@ const filteredItems = computed(() => {
       break;
   }
 
+  if (statusesFilter.value.length) {
+    items = items.filter(item => statusesFilter.value.includes(item.status));
+  }
+
   if (searchFilter.value && searchFilter.value.trim() !== '') {
     const searchLc = searchFilter.value.toLowerCase();
     items = items.filter(item => 
@@ -55,6 +60,13 @@ const handelSearch = (search) => {
 const handelRadioFilter = (filter) => {
   radioFilter.value = filter;
 };
+
+const handleCheckboxFilter = (filter) => {
+  if (statusesFilter.value.includes(filter)) {
+    return statusesFilter.value.splice(statusesFilter.value.indexOf(filter), 1);
+  }
+  return statusesFilter.value.push(filter);
+};
 </script>
 
 <template>
@@ -65,7 +77,7 @@ const handelRadioFilter = (filter) => {
       <!-- Radio buttons -->
       <FilterRadios @filter="handelRadioFilter" />
       <!-- List of filters for statuses -->
-      <FilterDropdown />
+      <FilterDropdown :items="items" @filter="handleCheckboxFilter" />
     </div>
   </div>
   <table class="w-full text-sm text-left">

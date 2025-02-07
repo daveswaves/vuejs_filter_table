@@ -1,4 +1,3 @@
-<!-- https://youtu.be/au27CwIFHzs?t=1023 -->
 <script setup>
 const emit = defineEmits(['filter']);
 

@@ -2,7 +2,6 @@
 const emit = defineEmits(['search']);
 
 const search = (e) => {
-  // console.log(e.target.value);
   emit('search', e.target.value);
 };
 </script>
