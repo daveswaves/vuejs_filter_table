@@ -19,26 +19,19 @@ const props = defineProps({
 const filteredItems = computed(() => {
   let items = props.items;
   const today = new Date();
+  const fmtToday = today.toISOString().split('T')[0]; // converts to yyyy-mm-dd
 
-  /* All this getFullYear(), getMonth(), getDate()
-   * can definitely be improved. */
   switch (radioFilter.value) {
     case 'today':
       items = items.filter(item => {
         const itemDate = new Date(item.due_at);
-        return itemDate.getFullYear() === today.getFullYear() &&
-               itemDate.getMonth() === today.getMonth() &&
-               itemDate.getDate() === today.getDate();
+        return item.due_at == fmtToday;
       });
       break;
     case 'past':
       items = items.filter(item => {
         const itemDate = new Date(item.due_at);
-        return itemDate.getFullYear() < today.getFullYear() ||
-               (itemDate.getFullYear() === today.getFullYear() &&
-                (itemDate.getMonth() < today.getMonth() ||
-                 (itemDate.getMonth() === today.getMonth() &&
-                  itemDate.getDate() < today.getDate())));
+        return item.due_at < fmtToday;
       });
       break;
   }

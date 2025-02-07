@@ -8,16 +8,23 @@
   },
   {
     "id": 2,
+    "user": { "name": "Charlie Brown" },
+    "status": "Completed",
+    "title": "Optimize frontend performance",
+    "due_at": "2025-01-28"
+  },
+  {
+    "id": 3,
     "user": { "name": "Alice Johnson" },
     "status": "Not Started", 
     "title": "Design database schema for new project",
     "due_at": "2025-02-06"
   },
   {
-    "id": 3,
-    "user": { "name": "Charlie Brown" },
-    "status": "Completed",
-    "title": "Optimize frontend performance",
-    "due_at": "2025-01-28"
+    "id": 4,
+    "user": { "name": "Mike Myers" },
+    "status": "In Progress", 
+    "title": "Mock database data for new project",
+    "due_at": "2025-02-07"
   }
 ]
