@@ -2,10 +2,11 @@
 
 [YouTube](https://youtu.be/au27CwIFHzs)
 
-Install Dependencies / Running Application
+Setup / Running Application
 ```sh
-# Install dependencies
-npm install express cors
+# Setup 
+git clone git@github.com:daveswaves/vuejs_filter_table.git
+npm install
 
 # Run the backend
 node backend/index.js
@@ -13,7 +14,8 @@ node backend/index.js
 # Run Vue JS as usual
 npm run dev
 
-# Alternatively, run the 'dev.js' script (see comments at top of script).
+# Alternatively, run 'dev.js' script (see comments at top of script)
+# to start backend & frontend simultaneously.
 node dev.js
 
 # Tip: To disable Copilot suggestions (Ctrl+Shift+P and type 'di cop').

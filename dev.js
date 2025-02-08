@@ -16,6 +16,9 @@ const frontend = spawn('npm', ['run', 'dev'], {
     shell: true
 });
 
+// Output to terminal explicitly
+process.stdout.write('Ctrl+C to quit backend & frontend.\n');
+
 // Handle clean shutdown
 process.on('SIGINT', () => {
     console.log('\nShutting down...');
