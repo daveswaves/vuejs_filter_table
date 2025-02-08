@@ -13,13 +13,14 @@ node backend/index.js
 # Run Vue JS as usual
 npm run dev
 
-# Tip: To disable Copilot suggestions (Ctrl+Shift+P and type 'di cop').
-# The following option will appear: Enable/Disable Copilot completions
-# 
+# Alternatively, run the 'dev.js' script (see comments at top of script).
+node dev.js
 
-# Attach VS Code's 'Enable/Disable Copilot completions' to hot key?
-# command 'github.copilot.toggleCompletions' not found.
-# It's 'Enable/Disable Copilot completions' when searching using Ctrl+Shift+P
+# Tip: To disable Copilot suggestions (Ctrl+Shift+P and type 'di cop').
+# The following option will appear: "Enable/Disable Copilot completions"
+# Assign to key binding:
+# Ctrl+Shift+P "Preferences: Open Keyboard Shortcuts", and search "Enable/Disable Copilot suggestions".
+# Assign required key combination: Alt+C Alt+P
 ```
 
 ### Project
